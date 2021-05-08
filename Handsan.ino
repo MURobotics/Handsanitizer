@@ -1,13 +1,14 @@
 #include <Servo.h>
-const int echoPin = 2;
-const int trigPin = 3;
-const int motorPin = 4;
-int dispenseTimes = 0;
+const int echoPin = 2;  //For Sensor
+const int trigPin = 3;  //For Sensor
+const int motorPin = 4; //For Motor
+uint64_t dispenseTimes = 0;  //Keeps track of Number of dispenses
 const int dispensePos = 500;
 const int dispenseDefault = 0;
-const int waitTime = 1000;
+const int waitTime = 500;
 
-long floorDist;
+const int DISTANCE_THRESHOLD = 10; //Theshold to Dispense
+
 
 Servo servo;
 
@@ -22,28 +23,27 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  long distance = getData();
-  if(distance < 20.8){
+  int distance = getData();
+  if(distance < DISTANCE_THRESHOLD){
     dispense();
     dispenseTimes++;
   }
-  
 
 }
 
 
 
 bool dispense(){
-    servo.write(dispensePos);
+    servo.write(180);
     delay(waitTime);
-    servo.write(dispenseDefault);
-    delay(waitTime);
-  
-  return true;
+    servo.write(0);
+    delay(waitTime*2);
+    
+    return true;
 }
 
-long getData() {
-  long duration, cm, distance;
+int getData() {
+  int duration, cm, distance;
   digitalWrite(trigPin, LOW);
 
   delayMicroseconds(2);
